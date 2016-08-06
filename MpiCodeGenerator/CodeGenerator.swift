@@ -40,10 +40,10 @@ class CodeGenerator {
         buffer.append("")
         // generate the initializer signature
         buffer.append("    public init(")
-        for (name, type) in attributes {
-            buffer.append("               \(name.lowercaseString): \(type.swiftType()),") // TODO get rid of , for last line
-        }
-        buffer.append(") {")
+        buffer.append(attributes.map { attr -> String in
+                let (name, type) = attr
+                return "               \(name.lowercaseString): \(type.swiftType())"
+            }.joinWithSeparator(",\n") + ") {")
         //   generate the initializer assignment
         for (name, _) in attributes {
             buffer.append("        self.\(name.lowercaseString) = \(name.lowercaseString)")
@@ -60,9 +60,10 @@ class CodeGenerator {
         buffer.append("")
         buffer.append("public func ==(left: \(structName), right: \(structName)) -> Bool {")
         buffer.append("    return")
-        for (name, _) in attributes {
-            buffer.append("        left.\(name.lowercaseString) == right.\(name.lowercaseString) &&") // TODO get rid of && for last line
-        }
+        buffer.append(attributes.map { attr -> String in
+                let (name, _) = attr
+                return "        left.\(name.lowercaseString) == right.\(name.lowercaseString)"
+            }.joinWithSeparator(" &&\n"))
         buffer.append("}")
         buffer.append("")
         return buffer.joinWithSeparator("\n")
