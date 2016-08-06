@@ -18,67 +18,81 @@ extension String {
 class CodeGenerator {
 
     static func generateCodeForMpiStruct(mpiStruct: MpiStruct) -> String {
-        var lines = [String]()
-        // get the attributes
+        var buffer = [String]()
         let attributes: [(String, MpiAttributeType)] = mpiStruct.attributes.sort { (left, right) -> Bool in
             let lname = left.0
             let rname = right.0
             return lname < rname
         }
-        // generate the class opening
-        lines.append("public struct \(mpiStruct.name) {")
+        buffer.append(generateStruct(mpiStruct.name, attributes: attributes))
+        buffer.append(generateEquatableInstance(mpiStruct.name, attributes: attributes))
+        buffer.append(generateJSONAbleType(mpiStruct.name, attributes: attributes))
+        return buffer.joinWithSeparator("\n")
+    }
+
+    private static func generateStruct(structName: String, attributes: [(String, MpiAttributeType)]) -> String {
+        var buffer = [String]()
+        buffer.append("public struct \(structName) {")
         // generate the attributes
         for (name, type) in attributes {
-            lines.append("    public let \(name.lowercaseString): \(type.swiftType())")
+            buffer.append("    public let \(name.lowercaseString): \(type.swiftType())")
         }
-        lines.append("")
+        buffer.append("")
         // generate the initializer signature
-        lines.append("    public init(")
+        buffer.append("    public init(")
         for (name, type) in attributes {
-            lines.append("               \(name.lowercaseString): \(type.swiftType()),") // TODO get rid of , for last line
+            buffer.append("               \(name.lowercaseString): \(type.swiftType()),") // TODO get rid of , for last line
         }
-        lines.append(") {")
+        buffer.append(") {")
         //   generate the initializer assignment
         for (name, _) in attributes {
-            lines.append("        self.\(name.lowercaseString) = \(name.lowercaseString)")
+            buffer.append("        self.\(name.lowercaseString) = \(name.lowercaseString)")
         }
-        lines.append("    }")
-        lines.append("}")
-        lines.append("")
-        // equatable
-        lines.append("extension \(mpiStruct.name): Equatable {}")
-        lines.append("")
-        lines.append("public func ==(left: \(mpiStruct.name), right: \(mpiStruct.name)) -> Bool {")
-        lines.append("    return")
+        buffer.append("    }")
+        buffer.append("}")
+        buffer.append("")
+        return buffer.joinWithSeparator("\n")
+    }
+
+    private static func generateEquatableInstance(structName: String, attributes: [(String, MpiAttributeType)]) -> String {
+        var buffer = [String]()
+        buffer.append("extension \(structName): Equatable {}")
+        buffer.append("")
+        buffer.append("public func ==(left: \(structName), right: \(structName)) -> Bool {")
+        buffer.append("    return")
         for (name, _) in attributes {
-            lines.append("        left.\(name.lowercaseString) == right.\(name.lowercaseString) &&") // TODO get rid of && for last line
+            buffer.append("        left.\(name.lowercaseString) == right.\(name.lowercaseString) &&") // TODO get rid of && for last line
         }
-        lines.append("}")
-        lines.append("")
-        // generate jsonabletype
-        lines.append("extension \(mpiStruct.name): JSONAbleType {")
-        lines.append("    public static func fromJSON(rawjson: [String: AnyObject]) throws -> \(mpiStruct.name) {")
-        lines.append("        let json = JSON(rawjson)")
-        lines.append("        guard let")
+        buffer.append("}")
+        buffer.append("")
+        return buffer.joinWithSeparator("\n")
+    }
+
+    private static func generateJSONAbleType(structName: String, attributes: [(String, MpiAttributeType)]) -> String {
+        var buffer = [String]()
+        buffer.append("extension \(structName): JSONAbleType {")
+        buffer.append("    public static func fromJSON(rawjson: [String: AnyObject]) throws -> \(structName) {")
+        buffer.append("        let json = JSON(rawjson)")
+        buffer.append("        guard let")
         for (name, attr) in attributes {
             if !attr.isOptional {
-                lines.append("            let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType()),")
+                buffer.append("            let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType()),")
                 // TODO get rid of , for last line
             }
         }
-        lines.append("                else { throw JSONAbleError.CouldNotParseJSON }")
+        buffer.append("                else { throw JSONAbleError.CouldNotParseJSON }")
         for (name, attr) in attributes {
             if attr.isOptional {
-                lines.append("        let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType())")
+                buffer.append("        let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType())")
             }
         }
-        lines.append("        return \(mpiStruct.name)(")
+        buffer.append("        return \(structName)(")
         for (name, _) in attributes {
-            lines.append("            \(name.lowercaseString): \(name),") // TODO get rid of , for last line
+            buffer.append("            \(name.lowercaseString): \(name),") // TODO get rid of , for last line
         }
-        lines.append("            )")
-        lines.append("    }")
-        lines.append("}")
-        return lines.joinWithSeparator("\n")
+        buffer.append("            )")
+        buffer.append("    }")
+        buffer.append("}")
+        return buffer.joinWithSeparator("\n")
     }
 }
