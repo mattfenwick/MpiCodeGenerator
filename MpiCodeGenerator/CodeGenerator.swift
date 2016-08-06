@@ -76,7 +76,7 @@ class CodeGenerator {
         buffer.append("        guard let")
         for (name, attr) in attributes {
             if !attr.isOptional {
-                buffer.append("            let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType()),")
+                buffer.append("            \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType()),")
                 // TODO get rid of , for last line
             }
         }
