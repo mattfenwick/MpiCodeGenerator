@@ -33,7 +33,7 @@ class CodeGenerator {
         }
         lines.append("")
         // generate the initializer signature
-        lines.append("public init(")
+        lines.append("    public init(")
         for (name, type) in attributes {
             lines.append("               \(name.lowercaseString): \(type.swiftType()),") // TODO get rid of , for last line
         }
@@ -43,6 +43,7 @@ class CodeGenerator {
             lines.append("        self.\(name.lowercaseString) = \(name.lowercaseString)")
         }
         lines.append("    }")
+        lines.append("}")
         lines.append("")
         // equatable
         lines.append("extension \(mpiStruct.name): Equatable {}")
