@@ -29,15 +29,13 @@ class CodeGenerator {
         lines.append("public struct \(mpiStruct.name) {")
         // generate the attributes
         for (name, type) in attributes {
-            let fullType = "\(type.type)\(type.isOptional ? "?" : "")"
-            lines.append("    public let \(name.lowercaseString): \(fullType)")
+            lines.append("    public let \(name.lowercaseString): \(type.swiftType())")
         }
         lines.append("")
         // generate the initializer signature
         lines.append("public init(")
         for (name, type) in attributes {
-            let fullType = "\(type.type)\(type.isOptional ? "?" : "")"
-            lines.append("               \(name.lowercaseString): \(fullType),") // TODO get rid of , for last line
+            lines.append("               \(name.lowercaseString): \(type.swiftType()),") // TODO get rid of , for last line
         }
         lines.append(") {")
         //   generate the initializer assignment
@@ -63,14 +61,14 @@ class CodeGenerator {
         lines.append("        guard let")
         for (name, attr) in attributes {
             if !attr.isOptional {
-                lines.append("            let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type),") // TODO first letter of type name must be lowercase
+                lines.append("            let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType()),")
                 // TODO get rid of , for last line
             }
         }
         lines.append("                else { throw JSONAbleError.CouldNotParseJSON }")
         for (name, attr) in attributes {
             if attr.isOptional {
-                lines.append("        let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type)") // TODO first letter of type name should be lowercase
+                lines.append("        let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType())")
             }
         }
         lines.append("        return \(mpiStruct.name)(")

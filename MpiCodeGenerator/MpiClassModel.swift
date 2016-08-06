@@ -8,15 +8,31 @@
 
 import Foundation
 
-enum MpiAttributeBaseType: String {
-    case MpiString = "String"
-    case MpiInt = "Int"
-    case MpiBool = "Bool"
+enum MpiAttributeBaseType {
+    case MpiString
+    case MpiInt
+    case MpiBool
+
+    func swiftType() -> String {
+        switch self {
+        case .MpiString: return "String"
+        case .MpiInt: return "Int"
+        case .MpiBool: return "Bool"
+        }
+    }
+
+    func swiftyJSONType() -> String {
+        return self.swiftType().lowercaseString
+    }
 }
 
 struct MpiAttributeType {
     let type: MpiAttributeBaseType
     let isOptional: Bool
+
+    func swiftType() -> String {
+        return type.swiftType() + (isOptional ? "?" : "")
+    }
 }
 
 struct MpiStruct {
