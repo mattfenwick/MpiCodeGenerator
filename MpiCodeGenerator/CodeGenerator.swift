@@ -9,7 +9,7 @@
 import Foundation
 
 extension String {
-    func lowercaseFirstCharacter() -> String {
+    var lowercaseFirstCharacter: String {
         let firstLetter = self[Range(self.startIndex ..< self.startIndex.advancedBy(1))]
         return firstLetter.lowercaseString + self[Range(self.startIndex.advancedBy(1) ..< self.endIndex)]
     }
@@ -35,18 +35,18 @@ class CodeGenerator {
         buffer.append("public struct \(structName) {")
         // generate the attributes
         for (name, type) in attributes {
-            buffer.append("    public let \(name.lowercaseString): \(type.swiftType())")
+            buffer.append("    public let \(name.lowercaseFirstCharacter): \(type.swiftType())")
         }
         buffer.append("")
         // generate the initializer signature
         buffer.append("    public init(")
         buffer.append(attributes.map { attr -> String in
                 let (name, type) = attr
-                return "               \(name.lowercaseString): \(type.swiftType())"
+                return "               \(name.lowercaseFirstCharacter): \(type.swiftType())"
             }.joinWithSeparator(",\n") + ") {")
         //   generate the initializer assignment
         for (name, _) in attributes {
-            buffer.append("        self.\(name.lowercaseString) = \(name.lowercaseString)")
+            buffer.append("        self.\(name.lowercaseFirstCharacter) = \(name.lowercaseFirstCharacter)")
         }
         buffer.append("    }")
         buffer.append("}")
@@ -62,7 +62,7 @@ class CodeGenerator {
         buffer.append("    return")
         buffer.append(attributes.map { attr -> String in
                 let (name, _) = attr
-                return "        left.\(name.lowercaseString) == right.\(name.lowercaseString)"
+                return "        left.\(name.lowercaseFirstCharacter) == right.\(name.lowercaseFirstCharacter)"
             }.joinWithSeparator(" &&\n"))
         buffer.append("}")
         buffer.append("")
@@ -75,23 +75,28 @@ class CodeGenerator {
         buffer.append("    public static func fromJSON(rawjson: [String: AnyObject]) throws -> \(structName) {")
         buffer.append("        let json = JSON(rawjson)")
         buffer.append("        guard let")
-        for (name, attr) in attributes {
-            if !attr.isOptional {
-                buffer.append("            \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType()),")
-                // TODO get rid of , for last line
-            }
-        }
-        buffer.append("                else { throw JSONAbleError.CouldNotParseJSON }")
-        for (name, attr) in attributes {
-            if attr.isOptional {
-                buffer.append("        let \(name.lowercaseString) = json[\"\(name)\"].\(attr.type.swiftyJSONType())")
-            }
-        }
+
+        let requiredAttributes = attributes.filter( { !$0.1.isOptional })
+        buffer.append(requiredAttributes.map { attr -> String in
+                let (name, type) = attr
+                return "            \(name.lowercaseFirstCharacter) = json[\"\(name)\"].\(type.type.swiftyJSONType())"
+            }.joinWithSeparator(",\n") + " else {")
+
+        buffer.append("                throw JSONAbleError.CouldNotParseJSON")
+        buffer.append("        }")
+
+        let optionalAttributes = attributes.filter({ $0.1.isOptional })
+        buffer.append(optionalAttributes.map { attr -> String in
+                let (name, type) = attr
+                return "        let \(name.lowercaseFirstCharacter) = json[\"\(name)\"].\(type.type.swiftyJSONType())"
+            }.joinWithSeparator("\n"))
+
         buffer.append("        return \(structName)(")
-        for (name, _) in attributes {
-            buffer.append("            \(name.lowercaseString): \(name),") // TODO get rid of , for last line
-        }
-        buffer.append("            )")
+        buffer.append(attributes.map { attr -> String in
+                let (name, _) = attr
+                return "            \(name.lowercaseFirstCharacter): \(name.lowercaseFirstCharacter)"
+            }.joinWithSeparator(",\n") + ")")
+
         buffer.append("    }")
         buffer.append("}")
         return buffer.joinWithSeparator("\n")
