@@ -8,6 +8,22 @@
 
 import Foundation
 
-print("Hello, World!")
+let classes = [
+    applicationStatus,
+    employment,
+    job,
+    photo,
+    profileAvailability,
+    profileAvailabilityTimeFrame,
+    profileBasicInfo,
+    profileDriver,
+    profileEducation,
+    profileEmployment,
+    profileManager,
+    profileModule,
+    profileReference
+]
 
-print(CodeGenerator.generateCodeForMpiStruct(profileEmployment))
+for myClass in classes.map(CodeGenerator.generateCodeForMpiStruct) {
+    print("\n" + myClass + "\n")
+}
