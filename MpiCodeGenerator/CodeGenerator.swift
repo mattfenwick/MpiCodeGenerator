@@ -24,9 +24,15 @@ class CodeGenerator {
             let rname = right.0
             return lname < rname
         }
+        buffer.append(generateImports())
         buffer.append(generateStruct(mpiStruct.name, attributes: attributes))
         buffer.append(generateEquatableInstance(mpiStruct.name, attributes: attributes))
         buffer.append(generateJSONAbleType(mpiStruct.name, attributes: attributes))
+        return buffer.joinWithSeparator("\n")
+    }
+
+    private static func generateImports() -> String {
+        let buffer = ["import Foundation", "import SnagFoundation", ""]
         return buffer.joinWithSeparator("\n")
     }
 
