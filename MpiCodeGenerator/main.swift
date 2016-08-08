@@ -24,6 +24,13 @@ let classes = [
     profileReference
 ]
 
-for myClass in classes.map(CodeGenerator.generateCodeForMpiStruct) {
+func writeFile(path: String, text: String) throws {
+    let path = NSURL(fileURLWithPath: "/Users/matt.fenwick/gitprojects/MpiCodeGenerator/generated").URLByAppendingPathComponent(path + ".swift")
+    try text.writeToURL(path, atomically: false, encoding: NSUTF8StringEncoding)
+}
+
+for classData in classes {
+    let myClass = CodeGenerator.generateCodeForMpiStruct(classData)
     print("\n" + myClass + "\n")
+    try writeFile(classData.name, text: myClass)
 }
