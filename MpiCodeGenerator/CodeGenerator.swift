@@ -32,7 +32,7 @@ class CodeGenerator {
     }
 
     private static func generateImports() -> String {
-        let buffer = ["import Foundation", "import SnagFoundation", ""]
+        let buffer = ["import Foundation", "import SnagFoundation", "import SwiftyJSON", ""]
         return buffer.joinWithSeparator("\n")
     }
 
