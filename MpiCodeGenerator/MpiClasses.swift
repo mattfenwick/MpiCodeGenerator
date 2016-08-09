@@ -67,7 +67,7 @@ let applicationStatus = MpiStruct(name: "ApplicationStatus", attributes: [
         "ApplicationId"     : MpiAttributeType(type: .MpiString, isOptional: false),
         "ApplicationUrl"    : MpiAttributeType(type: .MpiString, isOptional: false),
         "BrandTemplateName" : MpiAttributeType(type: .MpiString, isOptional: false),
-        "CandidateId"       : MpiAttributeType(type: .MpiString, isOptional: false),
+//        "CandidateId"       : MpiAttributeType(type: .MpiString, isOptional: false), // TODO or not?
         "CandidateStatus"   : MpiAttributeType(type: .MpiInt, isOptional: true),
         "CreateDate"        : MpiAttributeType(type: .MpiString, isOptional: false),
         "CustomJobTitle"    : MpiAttributeType(type: .MpiString, isOptional: false),
@@ -97,8 +97,8 @@ let job = MpiStruct(name: "Job", attributes: [
         "Longitude"         : MpiAttributeType(type: .MpiString, isOptional: true),
         "LocationName"      : MpiAttributeType(type: .MpiString, isOptional: true),
         "PostalCode"        : MpiAttributeType(type: .MpiString, isOptional: true),
-        "StateProvinceCode" : MpiAttributeType(type: .MpiString, isOptional: false),
-        "StateProvinceName" : MpiAttributeType(type: .MpiString, isOptional: false)
+        "StateProvCode"     : MpiAttributeType(type: .MpiString, isOptional: false),
+        "StateProvName"     : MpiAttributeType(type: .MpiString, isOptional: false)
     ])
 
 let profileManager = MpiStruct(name: "ProfileManager", attributes: [
