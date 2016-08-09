@@ -150,3 +150,21 @@ let employment = MpiStruct(name: "Employment", attributes: [
         "WorkplaceId"       : MpiAttributeType(type: .MpiString, isOptional: true),
         "WorkplaceAddress"  : MpiAttributeType(type: .MpiString, isOptional: true)
     ])
+
+let mpiListResponse = MpiStruct(name: "MPIListResponse", attributes: [
+    :
+    ])
+
+let mpiResponse = MpiStruct(name: "MPIResponse", attributes: [
+        "Total"         : MpiAttributeType(type: .MpiInt, isOptional: false),
+        "StartNum"      : MpiAttributeType(type: .MpiInt, isOptional: false),
+        "EndNum"        : MpiAttributeType(type: .MpiInt, isOptional: false),
+//        "Element": MpiAttributeType(type: .MpiTypeVariable("T"), isOptional: false)
+    ])
+
+let mpiPagedListResponse = MpiStruct(name: "MPIPagedListResponse", attributes: [
+        "Total"         : MpiAttributeType(type: .MpiInt, isOptional: false),
+        "StartNum"      : MpiAttributeType(type: .MpiInt, isOptional: false),
+        "EndNum"        : MpiAttributeType(type: .MpiInt, isOptional: false),
+        "NumRequested"  : MpiAttributeType(type: .MpiInt, isOptional: false)
+    ])
