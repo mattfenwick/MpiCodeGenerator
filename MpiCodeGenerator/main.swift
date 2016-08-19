@@ -10,12 +10,14 @@ import Foundation
 
 let classes = [
     applicationStatus,
+    authentication,
     employment,
     job,
     mpiListResponse,
     mpiResponse,
     mpiPagedListResponse,
-    photo,
+    profilePhoto,
+    profile,
     profileAvailability,
     profileAvailabilityTimeFrame,
     profileBasicInfo,
@@ -24,7 +26,8 @@ let classes = [
     profileEmployment,
     profileManager,
     profileModule,
-    profileReference
+    profileReference,
+    jobsQueryPrediction
 ]
 
 func writeFile(path: String, text: String) throws {

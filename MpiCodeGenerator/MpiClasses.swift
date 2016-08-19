@@ -110,7 +110,7 @@ let profileManager = MpiStruct(name: "ProfileManager", attributes: [
         "TotalWorkExperienceDescription": MpiAttributeType(type: .MpiString, isOptional: false)
     ])
 
-let photo = MpiStruct(name: "Photo", attributes: [
+let profilePhoto = MpiStruct(name: "ProfilePhoto", attributes: [
         "Url" : MpiAttributeType(type: .MpiString, isOptional: false)
     ])
 
@@ -146,7 +146,7 @@ let employment = MpiStruct(name: "Employment", attributes: [
         "StartDate"         : MpiAttributeType(type: .MpiString, isOptional: false),
         "StateProvCode"     : MpiAttributeType(type: .MpiString, isOptional: false),
         "SupervisorName"    : MpiAttributeType(type: .MpiString, isOptional: false),
-        "WorkHistoryDays"   : MpiAttributeType(type: .MpiString, isOptional: false),
+        "WorkHistoryDays"   : MpiAttributeType(type: .MpiInt, isOptional: false),
         "WorkplaceId"       : MpiAttributeType(type: .MpiString, isOptional: true),
         "WorkplaceAddress"  : MpiAttributeType(type: .MpiString, isOptional: true)
     ])
@@ -167,4 +167,28 @@ let mpiPagedListResponse = MpiStruct(name: "MPIPagedListResponse", attributes: [
         "StartNum"      : MpiAttributeType(type: .MpiInt, isOptional: false),
         "EndNum"        : MpiAttributeType(type: .MpiInt, isOptional: false),
         "NumRequested"  : MpiAttributeType(type: .MpiInt, isOptional: false)
+    ])
+
+let jobsQueryPrediction = MpiStruct(name: "JobsQueryPrediction", attributes: [
+    // TODO actually parsing for this response works differently,
+    //   because it's ["query", ["result1", "result2", "etc."]] ... oh well
+        "Query"     : MpiAttributeType(type: .MpiString, isOptional: false),
+        "Results"   : MpiAttributeType(type: .MpiString, isOptional: false) // actually an array of strings
+    ])
+
+let profile = MpiStruct(name: "Profile", attributes: [
+        "FirstName"             : MpiAttributeType(type: .MpiString, isOptional: false),
+        "LastName"              : MpiAttributeType(type: .MpiString, isOptional: false),
+        "Phone"                 : MpiAttributeType(type: .MpiString, isOptional: false),
+        "AddressPart1"          : MpiAttributeType(type: .MpiString, isOptional: false),
+        "AddressPart2"          : MpiAttributeType(type: .MpiString, isOptional: false),
+        "BirthDate"             : MpiAttributeType(type: .MpiString, isOptional: false),
+        "AddressCity"           : MpiAttributeType(type: .MpiString, isOptional: false),
+        "StateProvCode"         : MpiAttributeType(type: .MpiString, isOptional: false),
+        "PostalCode"            : MpiAttributeType(type: .MpiString, isOptional: false)
+    ])
+
+let authentication = MpiStruct(name: "Authentication", attributes: [
+        "AuthToken"     : MpiAttributeType(type: .MpiString, isOptional: false),
+        "JobSeekerId"   : MpiAttributeType(type: .MpiString, isOptional: false)
     ])
