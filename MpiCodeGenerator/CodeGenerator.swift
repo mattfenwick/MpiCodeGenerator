@@ -104,6 +104,20 @@ class CodeGenerator {
             }.joinWithSeparator(",\n") + ")")
 
         buffer.append("    }")
+
+        buffer.append("")
+        buffer.append("    public func asJSON() -> [String : AnyObject] {")
+        buffer.append("        return [")
+        for (name, type) in attributes {
+            if type.isOptional {
+                buffer.append("            \"\(name)\": \(name.lowercaseFirstCharacter) ?? NSNull(),")
+            } else {
+                buffer.append("            \"\(name)\": \(name.lowercaseFirstCharacter),")
+            }
+        }
+        buffer.append("        ]")
+        buffer.append("    }")
+
         buffer.append("}")
         return buffer.joinWithSeparator("\n")
     }
