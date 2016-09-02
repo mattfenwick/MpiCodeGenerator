@@ -80,27 +80,16 @@ class CodeGenerator {
         buffer.append("extension \(structName): JSONAbleType {")
         buffer.append("    public static func fromJSON(rawjson: [String: AnyObject]) throws -> \(structName) {")
         buffer.append("        let json = JSON(rawjson)")
-        buffer.append("        guard let")
-
-        let requiredAttributes = attributes.filter( { !$0.1.isOptional })
-        buffer.append(requiredAttributes.map { attr -> String in
-                let (name, type) = attr
-                return "            \(name.lowercaseFirstCharacter) = json[\"\(name)\"].\(type.type.swiftyJSONType())"
-            }.joinWithSeparator(",\n") + " else {")
-
-        buffer.append("                throw JSONAbleError.CouldNotParseJSON")
-        buffer.append("        }")
-
-        let optionalAttributes = attributes.filter({ $0.1.isOptional })
-        buffer.append(optionalAttributes.map { attr -> String in
-                let (name, type) = attr
-                return "        let \(name.lowercaseFirstCharacter) = json[\"\(name)\"].\(type.type.swiftyJSONType())"
-            }.joinWithSeparator("\n"))
 
         buffer.append("        return \(structName)(")
         buffer.append(attributes.map { attr -> String in
-                let (name, _) = attr
-                return "            \(name.lowercaseFirstCharacter): \(name.lowercaseFirstCharacter)"
+                let (name, type) = attr
+                let prefix = "            \(name.lowercaseFirstCharacter): "
+                if type.isOptional {
+                    return prefix + "try json.getOptionalValue(\"\(name)\")"
+                } else {
+                    return prefix + "try json.getValue(\"\(name)\")"
+                }
             }.joinWithSeparator(",\n") + ")")
 
         buffer.append("    }")
