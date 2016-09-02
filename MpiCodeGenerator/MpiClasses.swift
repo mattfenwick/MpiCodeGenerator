@@ -53,6 +53,7 @@ let profileBasicInfo = MpiStruct(name: "ProfileBasicInfo", attributes: [
     ])
 
 let profileAvailability = MpiStruct(name: "ProfileAvailability", attributes: [
+        "AvailableTimeFrames"               : MpiAttributeType(type: .MpiArray("ProfileAvailabilityTimeFrame"), isOptional: false),
         "AverageHoursWillingToWorkPerWeek"  : MpiAttributeType(type: .MpiInt, isOptional: false),
         "HasReliableTransportation"         : MpiAttributeType(type: .MpiBool, isOptional: false),
         "JobSeekerId"                       : MpiAttributeType(type: .MpiString, isOptional: false)
@@ -152,7 +153,7 @@ let employment = MpiStruct(name: "Employment", attributes: [
     ])
 
 let mpiListResponse = MpiStruct(name: "MPIListResponse", attributes: [
-    :
+    "List"  : MpiAttributeType(type: .MpiArray("T"), isOptional: false)
     ])
 
 let mpiResponse = MpiStruct(name: "MPIResponse", attributes: [
@@ -166,7 +167,8 @@ let mpiPagedListResponse = MpiStruct(name: "MPIPagedListResponse", attributes: [
         "Total"         : MpiAttributeType(type: .MpiInt, isOptional: false),
         "StartNum"      : MpiAttributeType(type: .MpiInt, isOptional: false),
         "EndNum"        : MpiAttributeType(type: .MpiInt, isOptional: false),
-        "NumRequested"  : MpiAttributeType(type: .MpiInt, isOptional: false)
+        "NumRequested"  : MpiAttributeType(type: .MpiInt, isOptional: false),
+        "List"          : MpiAttributeType(type: .MpiArray("T"), isOptional: false)
     ])
 
 let jobsQueryPrediction = MpiStruct(name: "JobsQueryPrediction", attributes: [

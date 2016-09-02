@@ -32,7 +32,7 @@ class CodeGenerator {
     }
 
     private static func generateImports() -> String {
-        let buffer = ["import Foundation", "import SnagFoundation", "import SwiftyJSON", ""]
+        let buffer = ["import Foundation", "import SnagFoundation", ""]
         return buffer.joinWithSeparator("\n")
     }
 
@@ -78,17 +78,18 @@ class CodeGenerator {
     private static func generateJSONAbleType(structName: String, attributes: [(String, MpiAttributeType)]) -> String {
         var buffer = [String]()
         buffer.append("extension \(structName): JSONAbleType {")
-        buffer.append("    public static func fromJSON(rawjson: [String: AnyObject]) throws -> \(structName) {")
-        buffer.append("        let json = JSON(rawjson)")
+        buffer.append("    public static func fromJSON(dict: [String: AnyObject]) throws -> \(structName) {")
 
         buffer.append("        return \(structName)(")
         buffer.append(attributes.map { attr -> String in
                 let (name, type) = attr
                 let prefix = "            \(name.lowercaseFirstCharacter): "
-                if type.isOptional {
-                    return prefix + "try json.getOptionalValue(\"\(name)\")"
+                if case let .MpiArray(name) = type.type {
+                    return prefix + "try getJSONAbleArray(dict, key: \"\(name)\")"
+                } else if type.isOptional {
+                    return prefix + "try getOptionalValue(dict, key: \"\(name)\")"
                 } else {
-                    return prefix + "try json.getValue(\"\(name)\")"
+                    return prefix + "try getValue(dict, key: \"\(name)\")"
                 }
             }.joinWithSeparator(",\n") + ")")
 
@@ -98,10 +99,13 @@ class CodeGenerator {
         buffer.append("    public func asJSON() -> [String : AnyObject] {")
         buffer.append("        return [")
         for (name, type) in attributes {
-            if type.isOptional {
-                buffer.append("            \"\(name)\": \(name.lowercaseFirstCharacter) ?? NSNull(),")
+            let prefix = "            \"\(name)\": "
+            if case .MpiArray = type.type {
+                buffer.append(prefix + "\(name.lowercaseFirstCharacter).map { $0.asJSON() },")
+            } else if type.isOptional {
+                buffer.append(prefix + "\(name.lowercaseFirstCharacter) ?? NSNull(),")
             } else {
-                buffer.append("            \"\(name)\": \(name.lowercaseFirstCharacter),")
+                buffer.append(prefix + "\(name.lowercaseFirstCharacter),")
             }
         }
         buffer.append("        ]")

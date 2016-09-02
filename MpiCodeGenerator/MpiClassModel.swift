@@ -12,12 +12,14 @@ enum MpiAttributeBaseType {
     case MpiString
     case MpiInt
     case MpiBool
+    case MpiArray(String)
 
     func swiftType() -> String {
         switch self {
         case .MpiString: return "String"
         case .MpiInt: return "Int"
         case .MpiBool: return "Bool"
+        case .MpiArray(let name): return "[\(name)]"
         }
     }
 
